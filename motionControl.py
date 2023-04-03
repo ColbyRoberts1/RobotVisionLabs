@@ -18,7 +18,7 @@ HEADTILT = 4
 HEADTURN = 3
 
 
-#root = win
+root = win
 tango = Controller()
 body = 6000
 headTurn = 6000
@@ -108,7 +108,7 @@ try:
             cv2.putText(blank_image, "track Fail", (100,80), cv2.FONT_HERSHEY_SIMPLEX, 0.75,(0,0,255),2)
 
         if(counter == 0):
-            initial_distance = depth_frame[boundingBox[0], boundingBox[1]]
+            initial_distance = depth_frame[500, 500]
 
         # If depth and color resolutions are different, resize color image to match depth image for display
         if depth_colormap_dim != color_colormap_dim:
@@ -119,18 +119,8 @@ try:
             blank_image = cv2.resize(blank_image, dsize=(depth_colormap_dim[1] * 2, depth_colormap_dim[0]), interpolation=cv2.INTER_AREA)
             cv2.rectangle(blank_image, p1, p2, (255,0,0), 2, 1)
             images = np.vstack((images, blank_image))
-
-    
-        # Show images
-        cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
-        cv2.imshow('RealSense', images)
         
-        cv2.waitKey(1)
-        if cv2.waitKey(1) == 27:
-            break
-    
-        
-        distance_mm = depth_frame[boundingBox[0], boundingBox[1]]
+        distance_mm = depth_frame[500, 500]
         if(distance_mm > initial_distance):
             motors += 200
             if(motors > 7900):
@@ -142,8 +132,15 @@ try:
                 motors = 1510
             tango.setTarget(MOTORS, motors)
         counter += 1
+
     
-      
+        # Show images
+        cv2.namedWindow('RealSense', cv2.WINDOW_AUTOSIZE)
+        cv2.imshow('RealSense', images)
+        
+        cv2.waitKey(1)
+        if cv2.waitKey(1) == 27:
+            break
 
             
 
