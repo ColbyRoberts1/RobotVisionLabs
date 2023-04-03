@@ -18,7 +18,7 @@ HEADTILT = 4
 HEADTURN = 3
 
 
-root = win
+#root = win
 tango = Controller()
 body = 6000
 headTurn = 6000
