@@ -10,6 +10,7 @@ import numpy as np
 import cv2
 import sys
 from maestro import Controller
+import math
 
 MOTORS = 1
 TURN = 2
@@ -31,7 +32,7 @@ pipeline = rs.pipeline()
 config = rs.config()
 
 tracker = cv2.TrackerKCF_create()
-boundingBox = (286, 320, 86, 100)
+boundingBox = (287, 320, 86, 100)
 
 # Get device product line for setting a supporting resolution
 pipeline_wrapper = rs.pipeline_wrapper(pipeline)
@@ -108,7 +109,11 @@ try:
             cv2.putText(blank_image, "track Fail", (100,80), cv2.FONT_HERSHEY_SIMPLEX, 0.75,(0,0,255),2)
 
         if(counter == 0):   
-            initial_distance = depth_frame.get_distance(1/2*boundingBox[0],1/2*boundingBox[1])
+            xCoord = (boundingBox[0]+boundingBox[2])/2
+            xCoord = math.floor(xCoord)
+            yCoord = (boundingBox[1]+boundingBox[3])/2
+            yCoord = math.floor(yCoord)
+            initial_distance = depth_frame.get_distance(xCoord, yCoord)
 
         # If depth and color resolutions are different, resize color image to match depth image for display
         if depth_colormap_dim != color_colormap_dim:
@@ -120,7 +125,11 @@ try:
             cv2.rectangle(blank_image, p1, p2, (255,0,0), 2, 1)
             images = np.vstack((images, blank_image))
         
-        distance_mm = depth_frame.get_distance(1/2*boundingBox[0], 1/2*boundingBox[1])
+        xCoord = (boundingBox[0]+boundingBox[2])/2
+        xCoord = math.floor(xCoord)
+        yCoord = (boundingBox[1]+boundingBox[3])/2
+        yCoord = math.floor(yCoord)
+        distance_mm = depth_frame.get_distance(xCoord, yCoord)
         if(distance_mm > initial_distance):
             motors += 200
             if(motors > 7900):
