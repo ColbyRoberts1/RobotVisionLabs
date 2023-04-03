@@ -134,12 +134,14 @@ try:
             motors += 200
             if(motors > 7900):
                 motors = 7900
-            tango.setTarget(MOTORS, motors)
+            #tango.setTarget(MOTORS, motors)
+            print("moving forwards")
         elif(distance_mm < initial_distance):
             motors -= 200
             if(motors < 1510):
                 motors = 1510
-            tango.setTarget(MOTORS, motors)
+            #tango.setTarget(MOTORS, motors)
+            print("moving backwards")
         counter += 1
 
     
