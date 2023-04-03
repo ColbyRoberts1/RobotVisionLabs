@@ -107,8 +107,8 @@ try:
             # Tracking failure
             cv2.putText(blank_image, "track Fail", (100,80), cv2.FONT_HERSHEY_SIMPLEX, 0.75,(0,0,255),2)
 
-        if(counter == 0):
-            initial_distance = depth_frame.get_distance(500,500)
+        if(counter == 0):   
+            initial_distance = depth_frame.get_distance(1/2*boundingBox[0],1/2*boundingBox[1])
 
         # If depth and color resolutions are different, resize color image to match depth image for display
         if depth_colormap_dim != color_colormap_dim:
@@ -120,7 +120,7 @@ try:
             cv2.rectangle(blank_image, p1, p2, (255,0,0), 2, 1)
             images = np.vstack((images, blank_image))
         
-        distance_mm = depth_frame.get_distance(500, 500)
+        distance_mm = depth_frame.get_distance(1/2*boundingBox[0], 1/2*boundingBox[1])
         if(distance_mm > initial_distance):
             motors += 200
             if(motors > 7900):
