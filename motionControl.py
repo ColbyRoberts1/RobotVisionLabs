@@ -31,7 +31,7 @@ pipeline = rs.pipeline()
 config = rs.config()
 
 tracker = cv2.TrackerKCF_create()
-boundingBox = (287, 320, 86, 100)
+boundingBox = (286, 320, 86, 100)
 
 # Get device product line for setting a supporting resolution
 pipeline_wrapper = rs.pipeline_wrapper(pipeline)
