@@ -25,8 +25,12 @@ class KeyControl():
     #113 == left
     #111 == forward
     #116 == backward
+
+
+    def iDoNothing():
+        print("")
  
-    def controller(self, key):
+    def arrow(self, key):
         print(key.keycode)
         if key.keycode == 116:
             self.motors += 200
