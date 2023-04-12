@@ -41,7 +41,7 @@ class KeyControl():
                 self.turn = 7900
             print(self.motors)
             self.tango.setTarget(MOTORS, self.motors)
-            self.tango.setTarget(TURN, self.turn)
+            self.tango.setTarget(MOTORS, self.turn)
         elif key.keycode == 111:
             self.motors -= 200
             if(self.motors < 1510):
