@@ -115,15 +115,24 @@ try:
         cv2.waitKey(1)
         #
 
-        if (cY < 260):
-            body -= 200
-            if(body < 5000):
-                body = 5000
-            tango.setTarget(MOTORS, motors)
-        else:
-            body = 6000
-            tango.setTarget(MOTORS, motors)
 
+        #y axis for moving forward 
+        if (cY < 260):
+            motors -= 200
+            turns += 200
+            if(motors < 5000):
+                motors = 5000
+            if(turns > 7000):
+                turns = 7000
+            tango.setTarget(MOTORS, motors)
+            tango.setTarget(TURN, turns)
+        else:
+            motors = 6000
+            turns = 6000
+            tango.setTarget(MOTORS, motors)
+            tango.setTarget(TURN, turns)
+
+        #x axis directions for turning
         if (cX > 370):
             motors -= 200
             if(motors < 5000):
