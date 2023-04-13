@@ -137,18 +137,27 @@ try:
         if (cX > 370):
             #turn right? 
             motors -= 200
+            turns -= 200
             if(motors < 5000):
                 motors = 5000
+            if(turns < 5000):
+                turns = 5000
             tango.setTarget(MOTORS, motors)
+            tango.setTarget(TURN, turns)
             print("turning right")
         elif (cX < 270):
             #turn left?
             motors += 200
+            turns += 200
             if(motors > 7000):
                 motors = 7000
+            if(turns > 7000):
+                turns = 7000
             tango.setTarget(MOTORS, motors)
+            tango.setTarget(TURN,turns)
             print("turning left")
         else:
+            #default
             motors = 6000
             tango.setTarget(MOTORS, motors)
 
