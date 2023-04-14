@@ -116,8 +116,8 @@ try:
         #
 
         if (cY < 260):
-            motors = 5400
-            turns = 6600
+            motors = 5000
+            turns = 7000
             
             tango.setTarget(MOTORS, motors)
             tango.setTarget(TURN,turns)
@@ -131,15 +131,15 @@ try:
 
         if (cX > 370):
             #turn right
-            motors = 5400
-            turn = 5400
+            motors = 5200
+            turn = 5200
             tango.setTarget(MOTORS, motors)
             tango.setTarget(TURN,turns)
             print("turning right")
         elif (cX < 270):
             #turn left
-            motors = 6600
-            turn = 6600
+            motors = 6800
+            turn = 6800
             tango.setTarget(MOTORS, motors)
             tango.setTarget(TURN,turns)
             print("turning left")
