@@ -116,8 +116,8 @@ try:
         #
 
         if (cY < 260):
-            motors = 5000
-            turns = 7000
+            motors = 5300
+            turns = 6700
             
             tango.setTarget(MOTORS, motors)
             tango.setTarget(TURN,turns)
