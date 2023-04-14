@@ -142,14 +142,14 @@ try:
             turn = 6600
             tango.setTarget(MOTORS, motors)
             tango.setTarget(TURN,turns)
-            print("turning")
+            print("turning left")
             
-        else:
-            motors = 6000
-            turn = 6000
-            tango.setTarget(MOTORS, motors)
-            tango.setTarget(TURN,turns)
-
+        #else:
+            #motors = 6000
+            #turn = 6000
+            #tango.setTarget(MOTORS, motors)
+            #tango.setTarget(TURN,turns)
+            #print("stopping")
         print(cX)
 finally:
 
