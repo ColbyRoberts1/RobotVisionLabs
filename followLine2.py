@@ -121,11 +121,13 @@ try:
             
             tango.setTarget(MOTORS, motors)
             tango.setTarget(TURN,turn)
+            print("forward")
         else:
             motors = 6000
             turn = 6000
             tango.setTarget(MOTORS, motors)
             tango.setTarget(TURN,turn)
+
 
         if (cX > 370):
             #turn right
@@ -133,10 +135,14 @@ try:
             turn = 5500
             tango.setTarget(MOTORS, motors)
             tango.setTarget(TURN,turn)
+            print("turning right")
         elif (cX < 270):
             #turn left
             motors = 6500
             turn = 6500
+            tango.setTarget(MOTORS, motors)
+            tango.setTarget(TURN,turn)
+            print("turning")
             
         else:
             motors = 6000
