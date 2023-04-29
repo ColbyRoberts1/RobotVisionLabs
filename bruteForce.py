@@ -15,3 +15,7 @@ turn = 5300
 for x in range (200):
     tango.setTarget(MOTORS,motors)
     tango.setTarget(TURN, turn)
+
+motors,turn = 6000
+tango.setTarget(MOTORS,motors)
+tango.setTarget(TURN, turn)
