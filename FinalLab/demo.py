@@ -33,6 +33,7 @@ savedColor = None
 # Set size of QR code in real world
 size_of_qrcode = 0.1524 # meters
 
+
 while True:
     # Get a frame from the camera
     frames = pipeline.wait_for_frames()
