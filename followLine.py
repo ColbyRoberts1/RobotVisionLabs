@@ -67,8 +67,6 @@ color_frame = frames.get_color_frame()
 # Convert images to numpy arrays
 color_image = np.asanyarray(color_frame.get_data())
 
-
-
 try:
     while True:
 
