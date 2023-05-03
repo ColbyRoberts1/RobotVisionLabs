@@ -253,7 +253,7 @@ while True:
         elif savedColor is not None and atEnd is True:
             print("COLOR DETECTED: " + savedColor)
 
-            tango.setTarget(HEADTILT, 4000)
+            tango.setTarget(HEADTILT, 4500)
 
             if(savedColor == "yellow"):
                 color_mask = cv2.inRange(color_image, yellow_lower, yellow_upper)
