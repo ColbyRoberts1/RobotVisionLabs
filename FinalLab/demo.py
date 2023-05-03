@@ -54,7 +54,7 @@ while True:
     hsv = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
     
     #test imshow
-    cv2.imshow("test img", color_image)
+    #cv2.imshow("test img", color_image)
     if not color_frame:
         continue
     
@@ -70,8 +70,7 @@ while True:
         if len(corners) > 0:
             ids = ids.flatten()
             for (markerCorner, markerID) in zip(corners, ids):
-                print(markerID)
-                if markerID is '49':
+                if (markerID == np.int32(49)):
                     corners = markerCorner.reshape((4, 2))
                     (tl, tr, br, bl) = corners
                     tr = (int(tr[0]), int(tr[1]))
@@ -84,10 +83,10 @@ while True:
 
         if c is 0:
             print("No code found")
-            tango.setTarget(MOTORS, 5000)
-            tango.setTarget(TURN, 5000)
+            #tango.setTarget(MOTORS, 5000)
+            #tango.setTarget(TURN, 5000)
         
-        if c is 1:
+        elif c is 1:
             cv2.circle(color_image, (cX, cY), 5, (0, 165, 255), -1)
 
             distance = depth_frame.get_distance(cX,cY)
@@ -276,7 +275,7 @@ while True:
                 print("done")
                 break
         
-        #cv2.imshow("color", color_image)
+    cv2.imshow("color", color_image)
 
     # Exit if the 'q' key is pressed
     if cv2.waitKey(1) == 27:
