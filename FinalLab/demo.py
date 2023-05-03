@@ -50,8 +50,6 @@ green_lower = np.array([140, 220, 40], np.uint8)
 green_upper = np.array([180, 255,100], np.uint8)
 pink_lower = np.array([150, 0, 150], np.uint8)
 pink_upper = np.array([255, 100, 255], np.uint8)
-orange_lower = np.array([0, 200, 20], np.uint8)
-orange_upper = np.array([60, 255, 255], np.uint8)
 motors = 6000
 
 qrCodes = ['22', '49']
@@ -63,6 +61,7 @@ endArea = True
 colorFound = False
 savedColor = None
 atEnd = False 
+firstLoop = True
 
 # Set size of QR code in real world
 size_of_qrcode = 0.1524 # meters
@@ -269,7 +268,7 @@ while True:
             Moments = cv2.moments(color_mask)
             if Moments["m00"] != 0:
                 cX = int(Moments["m10"] / Moments["m00"])
-                cY = int(Moments["m01"] 
+                cY = int(Moments["m01"] / Moments["m00"]) 
                 
             elif (cX > 370):
                 move('right', .2, .4)
