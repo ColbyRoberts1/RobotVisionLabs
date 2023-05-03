@@ -1,6 +1,7 @@
 import cv2
 import pyrealsense2 as rs
 import numpy as np
+import cv2.aruco as aruco
 from maestro import Controller
 
 face_cascade = cv2.CascadeClassifier('data/haarcascades/haarcascade_frontalface_default.xml')
@@ -13,6 +14,9 @@ config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 30)
 pipeline.start(config)
 frames = pipeline.wait_for_frames()
 tango = Controller()
+
+aruco_dict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
+parameters = aruco.DetectorParameters_create()
 
 MOTORS = 1
 TURN = 2
@@ -49,6 +53,8 @@ while True:
     depth_image = np.asanyarray(depth_frame.get_data())
     hsv = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
     
+    #test imshow
+    cv2.imshow("test img", color_image)
     if not color_frame:
         continue
     
@@ -59,40 +65,53 @@ while True:
     if miningArea is False:
         #qr_code_detector = cv2.QRCodeDetector()
         #retval, decoded_info, points, straight_qrcode = qr_code_detector.detectAndDecodeMulti(frame)
-        orange_mask = cv2.inRange(hsv, orange_lower, orange_upper)
-        Moments = cv2.moments(orange_mask)
-        if Moments["m00"] != 0:
-            cX = int(Moments["m10"] / Moments["m00"])
-            cY = int(Moments["m01"] / Moments["m00"])
-        else:
-            print("Turning to find cone")
-            tango.setTarget(MOTORS, 5600)
-            tango.setTarget(TURN, 5600)
+        c = 0
+        corners, ids, reject = aruco.detectMarkers(frame, aruco_dict, parameters=parameters,)
+        if len(corners) > 0:
+            ids = ids.flatten()
+            for (markerCorner, markerID) in zip(corners, ids):
+                print(markerID)
+                if markerID is '49':
+                    corners = markerCorner.reshape((4, 2))
+                    (tl, tr, br, bl) = corners
+                    tr = (int(tr[0]), int(tr[1]))
+                    tl = (int(tl[0]), int(tl[1]))
+                    br = (int(br[0]), int(br[1]))
+                    bl = (int(bl[0]), int(bl[1]))
+                    cX = int((tl[0] + br[0]) / 2)
+                    cY = int((tl[1] + br[1]) / 2)
+                    c = 1
 
-        cv2.circle(color_image, (cX, cY), 5, (0, 165, 255), -1)
+        if c is 0:
+            print("No code found")
+            tango.setTarget(MOTORS, 5000)
+            tango.setTarget(TURN, 5000)
+        
+        if c is 1:
+            cv2.circle(color_image, (cX, cY), 5, (0, 165, 255), -1)
 
-        distance = depth_frame.get_distance(cX,cY)
+            distance = depth_frame.get_distance(cX,cY)
 
 
-        if (cX > 370):
-            print("turning right")
-            tango.setTarget(MOTORS, 5600)
-            tango.setTarget(TURN, 5600)
-        elif (cX < 270):
-            print("turn left")
-            tango.setTarget(MOTORS, 6400)
-            tango.setTarget(TURN, 6400)
-        else:
-            if(distance > 1.5):
-                print("forward")
-                tango.setTarget(MOTORS, 5300)
-                tango.setTarget(TURN, 6700)
+            if (cX > 370):
+                print("turning right")
+                #tango.setTarget(MOTORS, 5600)
+                #tango.setTarget(TURN, 5600)
+            elif (cX < 270):
+                print("turn left")
+                #tango.setTarget(MOTORS, 6400)
+                #tango.setTarget(TURN, 6400)
+            else:
+                if(distance > 1.5):
+                    print("forward")
+                    #tango.setTarget(MOTORS, 5300)
+                    #tango.setTarget(TURN, 6700)
             
-            elif(distance <= 1.5):
-                tango.setTarget(MOTORS, 6000)
-                tango.setTarget(TURN, 6000)
-                print("Entered Mining Area!")
-                miningArea = True
+                elif(distance <= 1.5):
+                    #tango.setTarget(MOTORS, 6000)
+                    #tango.setTarget(TURN, 6000)
+                    print("Entered Mining Area!")
+                    miningArea = True
                 
     elif miningArea is True:
         if faceFound is False:
@@ -104,8 +123,8 @@ while True:
                 print("Turning Right")
                 motors = 5600 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
                 turns = 5600 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
-                tango.setTarget(MOTORS, motors)
-                tango.setTarget(TURN, turns)
+                #tango.setTarget(MOTORS, motors)
+                #tango.setTarget(TURN, turns)
             elif(len(faces) != 0):
                 print("Found Face!")
                 for (x,y,w,h) in faces:
@@ -120,34 +139,34 @@ while True:
                     print("turning right")
                     motors = 5600 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
                     turns = 5600 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
-                    tango.setTarget(MOTORS, motors)
-                    tango.setTarget(TURN, turns)
+                    #tango.setTarget(MOTORS, motors)
+                    #tango.setTarget(TURN, turns)
                 elif (cX < 270):
                     #turn left?
                     print("turning left")
                     motors = 6400 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
                     turns = 6400 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
-                    tango.setTarget(MOTORS, motors)
-                    tango.setTarget(TURN,turns)
+                    #tango.setTarget(MOTORS, motors)
+                    #tango.setTarget(TURN,turns)
                 else:
                     print("pausing")
                     motors = 6000
                     turns = 6000
-                    tango.setTarget(MOTORS, motors)
-                    tango.setTarget(TURN,turns)
+                    #tango.setTarget(MOTORS, motors)
+                    #tango.setTarget(TURN,turns)
                     
                 if distance > 2:
                     print("moving forward")
                     motors = 5300 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
                     turns = 6700 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
-                    tango.setTarget(MOTORS, motors)
-                    tango.setTarget(TURN,turns)
+                    #tango.setTarget(MOTORS, motors)
+                    #tango.setTarget(TURN,turns)
                 elif distance < 1:
                     print("moving backwards")
                     motors = 6700
                     turns = 5300
-                    tango.setTarget(MOTORS, motors)
-                    tango.setTarget(TURN, turns)
+                    #tango.setTarget(MOTORS, motors)
+                    #tango.setTarget(TURN, turns)
                 else:
                     faceFound = True
     
@@ -237,15 +256,15 @@ while True:
                 print("turning right")
                 motors = 5600 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
                 turns = 5600 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
-                tango.setTarget(MOTORS, motors)
-                tango.setTarget(TURN, turns)
+                #tango.setTarget(MOTORS, motors)
+                #tango.setTarget(TURN, turns)
             elif (cX < 270):
                 #turn left?
                 print("turning left")
                 motors = 5600 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
                 turns = 5600 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
-                tango.setTarget(MOTORS, motors)
-                tango.setTarget(TURN,turns)
+                #tango.setTarget(MOTORS, motors)
+                #tango.setTarget(TURN,turns)
                 print("turning left")
             elif distance > 0.5:
                 print("moving forward")
@@ -256,14 +275,16 @@ while True:
             else:
                 print("done")
                 break
+        
+        #cv2.imshow("color", color_image)
 
-        cv2.imshow("image", color_image)
-    
     # Exit if the 'q' key is pressed
     if cv2.waitKey(1) == 27:
-        tango.setTarget(MOTORS, 6000)
-        tango.setTarget(TURN, 6000)
         break
+
+        
+tango.setTarget(MOTORS, 6000)
+tango.setTarget(TURN, 6000)
 
 # Clean up
 cv2.destroyAllWindows()
