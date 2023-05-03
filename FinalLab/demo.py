@@ -42,7 +42,7 @@ TURN = 2
 BODY = 0
 HEADTILT = 4
 
-tango.setTarget(HEADTILT, 6000)
+tango.setTarget(HEADTILT, 5500)
 
 yellow_lower = np.array([120, 150, 150], np.uint8)
 yellow_upper = np.array([200, 255, 200], np.uint8)
@@ -281,6 +281,7 @@ while True:
                 if distance > 2:
                     move('forward', .4, 1)
                 else:
+                    move('forward', .75, 1)
                     tango.setTarget(MOTORS, 6000)
                     tango.setTarget(TURN, 6000)
                     print("Done!")
