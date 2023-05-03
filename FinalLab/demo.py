@@ -44,12 +44,12 @@ HEADTILT = 4
 
 tango.setTarget(HEADTILT, 6000)
 
-yellow_lower = np.array([120, 150, 150], np.uint8)
-yellow_upper = np.array([200, 255, 200], np.uint8)
-green_lower = np.array([140, 220, 40], np.uint8)
-green_upper = np.array([180, 255,100], np.uint8)
-pink_lower = np.array([150, 0, 150], np.uint8)
-pink_upper = np.array([255, 100, 255], np.uint8)
+yellow_lower = np.array([140, 255, 100], np.uint8)
+yellow_upper = np.array([255, 205, 100], np.uint8)
+green_lower = np.array([60, 180, 50], np.uint8)
+green_upper = np.array([150, 180, 70], np.uint8)
+pink_lower = np.array([200, 50, 240], np.uint8)
+pink_upper = np.array([250, 100, 200], np.uint8)
 motors = 6000
 
 qrCodes = ['22', '49']
@@ -74,9 +74,6 @@ while True:
     color_image = np.asanyarray(color_frame.get_data())
     depth_image = np.asanyarray(depth_frame.get_data())
     hsv = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
-    
-    #test imshow
-    #cv2.imshow("test img", color_image)
     if not color_frame:
         continue
     
@@ -111,12 +108,12 @@ while True:
             distance = depth_frame.get_distance(cX,cY)
 
             if (cX > 370):
-                move('right', .2, .4)
+                move('right', .2, .5)
             elif (cX < 270):
-                move('left', .2, .4)
+                move('left', .2, .5)
             else:
                 if(distance > 1):
-                    move('forward', .75, .5)
+                    move('forward', .75, 1)
             
                 elif(distance <= 1):
                     tango.setTarget(MOTORS, 6000)
@@ -131,7 +128,7 @@ while True:
             
             if(len(faces) == 0):
                 #Turn Until Face is found
-                move('right', .5, .5)
+                move('right', .25, 1.5)
             elif(len(faces) != 0):
                 print("Found Face!")
                 for (x,y,w,h) in faces:
@@ -143,10 +140,10 @@ while True:
                 
                 if (cX > 370):
                     #turn right? 
-                    move('right', .2, .4)
+                    move('right', .2, .5)
                 elif (cX < 270):
                     #turn left?
-                    move('left', .2, .4)
+                    move('left', .2, .5)
                 else:
                     print("pausing")
                     motors = 6000
@@ -155,7 +152,7 @@ while True:
                     #tango.setTarget(TURN,turns)
                     
                 if distance > 1:
-                    move('forward', .4, .4)
+                    move('forward', .4, 1)
                 else:
                     faceFound = True
     
@@ -240,12 +237,12 @@ while True:
                 distance = depth_frame.get_distance(cX,cY)
 
                 if (cX > 370):
-                    move('right', .2, .4)
+                    move('right', .2, .5)
                 elif (cX < 270):
-                    move('left', .2, .4)
+                    move('left', .2, .5)
                 else:
-                    if(distance > 1):
-                        move('forward', .75, .5)
+                    if(distance > 2):
+                        move('forward', .75, 1)
 
                     elif(distance <= 1):
                         tango.setTarget(MOTORS, 6000)
@@ -255,6 +252,8 @@ while True:
                         
         elif savedColor is not None and atEnd is True:
             print("COLOR DETECTED: " + savedColor)
+
+            tango.setTarget(HEADTILT, 4000)
 
             if(savedColor == "yellow"):
                 color_mask = cv2.inRange(color_image, yellow_lower, yellow_upper)
@@ -271,13 +270,13 @@ while True:
                 cY = int(Moments["m01"] / Moments["m00"]) 
                 
             elif (cX > 370):
-                move('right', .2, .4)
+                move('right', .2, .5)
             elif (cX < 270):
                 #turn left?
-                move('left', .2, .4)
+                move('left', .2, .5)
             elif distance > 0.5:
                 print("moving forward")
-                move('forward', .4, .4)
+                move('forward', .4, 1)
             else:
                 tango.setTarget(MOTORS, 6000)
                 tango.setTarget(TURN, 6000)
