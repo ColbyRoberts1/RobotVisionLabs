@@ -87,7 +87,7 @@ while True:
             body = 6000
             #tango.setTarget(BODY,body)
             print("Entered Mining Area!")
-            inMiningArea = True
+            miningArea = True
                 
     elif miningArea is True:
         if faceFound is False:
