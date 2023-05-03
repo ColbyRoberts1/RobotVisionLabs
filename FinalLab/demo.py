@@ -44,12 +44,12 @@ HEADTILT = 4
 
 tango.setTarget(HEADTILT, 6000)
 
-yellow_lower = np.array([140, 255, 100], np.uint8)
-yellow_upper = np.array([255, 205, 100], np.uint8)
-green_lower = np.array([60, 180, 50], np.uint8)
-green_upper = np.array([150, 180, 70], np.uint8)
-pink_lower = np.array([200, 50, 240], np.uint8)
-pink_upper = np.array([250, 100, 200], np.uint8)
+yellow_lower = np.array([0, 51, 178], np.uint8)
+yellow_upper = np.array([57, 218, 256], np.uint8)
+green_lower = np.array([0, 85, 181], np.uint8)
+green_upper = np.array([256, 150, 249], np.uint8)
+pink_lower = np.array([52, 132, 186], np.uint8)
+pink_upper = np.array([251, 206, 230], np.uint8)
 motors = 6000
 
 qrCodes = ['22', '49']
@@ -73,7 +73,7 @@ while True:
     depth_frame = frames.get_depth_frame()
     color_image = np.asanyarray(color_frame.get_data())
     depth_image = np.asanyarray(depth_frame.get_data())
-    hsv = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
+    hsvcolor_image = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
     if not color_frame:
         continue
     
@@ -101,16 +101,16 @@ while True:
                     c = 1
 
         if c is 0:
-            move('right', .5, .5)
+            move('right', .5, 1)
         
         elif c is 1:
             cv2.circle(color_image, (cX, cY), 5, (0, 165, 255), -1)
             distance = depth_frame.get_distance(cX,cY)
 
             if (cX > 370):
-                move('right', .2, .5)
+                move('right', .2, 1)
             elif (cX < 270):
-                move('left', .2, .5)
+                move('left', .2, 1)
             else:
                 if(distance > 1):
                     move('forward', .75, 1)
@@ -140,10 +140,10 @@ while True:
                 
                 if (cX > 370):
                     #turn right? 
-                    move('right', .2, .5)
+                    move('right', .2, 1)
                 elif (cX < 270):
                     #turn left?
-                    move('left', .2, .5)
+                    move('left', .2, 1)
                 else:
                     print("pausing")
                     motors = 6000
@@ -166,22 +166,22 @@ while True:
                 print("AWAITING ICE")
                 
             
-            yellow_mask = cv2.inRange(color_image, yellow_lower, yellow_upper)
+            yellow_mask = cv2.inRange(hsvcolor_image, yellow_lower, yellow_upper)
 
-            green_mask = cv2.inRange(color_image, green_lower, green_upper)
+            green_mask = cv2.inRange(hsvcolor_image, green_lower, green_upper)
 
-            pink_mask = cv2.inRange(color_image, pink_lower, pink_upper)
+            pink_mask = cv2.inRange(hsvcolor_image, pink_lower, pink_upper)
 
             kernel = np.ones((5, 5), "uint8")
     
             yellow_mask = cv2.dilate(yellow_mask, kernel)
-            res_yellow = cv2.bitwise_and(color_image, color_image, mask = yellow_mask)
+            res_yellow = cv2.bitwise_and(hsvcolor_image, hsvcolor_image, mask = yellow_mask)
     
             green_mask = cv2.dilate(green_mask, kernel)
-            res_green = cv2.bitwise_and(color_image, color_image, mask = green_mask)
+            res_green = cv2.bitwise_and(hsvcolor_image, hsvcolor_image, mask = green_mask)
     
             pink_mask = cv2.dilate(pink_mask, kernel)
-            res_pink = cv2.bitwise_and(color_image, color_image, mask = pink_mask)
+            res_pink = cv2.bitwise_and(hsvcolor_image, hsvcolor_image, mask = pink_mask)
 
             contours, hierarchy = cv2.findContours(yellow_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     
@@ -189,8 +189,9 @@ while True:
                 area = cv2.contourArea(contour)
                 if(area > 1000):
                     savedColor = "yellow"
+                    print(savedColor)
                     x, y, w, h = cv2.boundingRect(contour)
-                    color_image = cv2.rectangle(color_image, (x, y), (x + w, y + h), (51, 255, 255), 2)
+                    color_image = cv2.rectangle(hsvcolor_image, (x, y), (x + w, y + h), (51, 255, 255), 2)
             
 
             # Creating contour to track green color
@@ -200,8 +201,9 @@ while True:
                 area = cv2.contourArea(contour)
                 if(area > 1000):
                     savedColor = "green"
+                    print(savedColor)
                     x, y, w, h = cv2.boundingRect(contour)
-                    color_image = cv2.rectangle(color_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                    color_image = cv2.rectangle(hsvcolor_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
             
 
             contours, hierarchy = cv2.findContours(pink_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -210,8 +212,9 @@ while True:
                 area = cv2.contourArea(contour)
                 if(area > 1000):
                     savedColor = "pink"
+                    print(savedColor)
                     x, y, w, h = cv2.boundingRect(contour)
-                    color_image = cv2.rectangle(color_image, (x, y), (x + w, y + h), (255, 77, 255), 2)
+                    color_image = cv2.rectangle(hsvcolor_image, (x, y), (x + w, y + h), (255, 77, 255), 2)
         elif savedColor is not None and atEnd is False:
             c = 0
             corners, ids, reject = aruco.detectMarkers(frame, aruco_dict, parameters=parameters,)
@@ -237,14 +240,14 @@ while True:
                 distance = depth_frame.get_distance(cX,cY)
 
                 if (cX > 370):
-                    move('right', .2, .5)
+                    move('right', .2, 1)
                 elif (cX < 270):
-                    move('left', .2, .5)
+                    move('left', .2, 1)
                 else:
-                    if(distance > 2):
+                    if(distance > 2.5):
                         move('forward', .75, 1)
 
-                    elif(distance <= 1):
+                    elif(distance <= 2.5):
                         tango.setTarget(MOTORS, 6000)
                         tango.setTarget(TURN, 6000)
                         print("At End Area!")
@@ -258,10 +261,10 @@ while True:
             if(savedColor == "yellow"):
                 color_mask = cv2.inRange(color_image, yellow_lower, yellow_upper)
 
-            if(savedColor == "green"):
+            elif(savedColor == "green"):
                 color_mask = cv2.inRange(color_image, green_lower, green_upper)
 
-            if(savedColor == "pink"):
+            elif(savedColor == "pink"):
                 color_mask = cv2.inRange(color_image, pink_lower, pink_upper)
                 
             Moments = cv2.moments(color_mask)
@@ -269,19 +272,22 @@ while True:
                 cX = int(Moments["m10"] / Moments["m00"])
                 cY = int(Moments["m01"] / Moments["m00"]) 
                 
-            elif (cX > 370):
-                move('right', .2, .5)
-            elif (cX < 270):
-                #turn left?
-                move('left', .2, .5)
-            elif distance > 0.5:
-                print("moving forward")
-                move('forward', .4, 1)
+                if (cX > 370):
+                    move('right', .2, 1)
+                elif (cX < 270):
+                    #turn left?
+                    move('left', .2, 1)
+                elif distance > 1:
+                    print("moving forward")
+                    move('forward', .4, 1)
+                else:
+                    tango.setTarget(MOTORS, 6000)
+                    tango.setTarget(TURN, 6000)
+                    print("Done!")
+                    break
+            
             else:
-                tango.setTarget(MOTORS, 6000)
-                tango.setTarget(TURN, 6000)
-                print("Done!")
-                break
+                move('left', .3, 1)
         
     cv2.imshow("color", color_image)
 
