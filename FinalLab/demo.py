@@ -1,4 +1,5 @@
 import cv2
+import time
 import pyrealsense2 as rs
 import numpy as np
 import cv2.aruco as aruco
@@ -21,6 +22,9 @@ parameters = aruco.DetectorParameters_create()
 MOTORS = 1
 TURN = 2
 BODY = 0
+HEADTILT = 4
+
+tango.setTarget(HEADTILT, 6000)
 
 yellow_lower = np.array([120, 150, 150], np.uint8)
 yellow_upper = np.array([200, 255, 200], np.uint8)
@@ -83,8 +87,12 @@ while True:
 
         if c is 0:
             print("No code found")
-            #tango.setTarget(MOTORS, 5000)
-            #tango.setTarget(TURN, 5000)
+            tango.setTarget(MOTORS, 5125)
+            tango.setTarget(TURN, 5125)
+            time.sleep(1)
+            tango.setTarget(MOTORS, 6000)
+            tango.setTarget(TURN, 6000)
+            time.sleep(.75)
         
         elif c is 1:
             cv2.circle(color_image, (cX, cY), 5, (0, 165, 255), -1)
@@ -94,21 +102,21 @@ while True:
 
             if (cX > 370):
                 print("turning right")
-                #tango.setTarget(MOTORS, 5600)
-                #tango.setTarget(TURN, 5600)
+                tango.setTarget(MOTORS, 5600)
+                tango.setTarget(TURN, 5600)
             elif (cX < 270):
                 print("turn left")
                 #tango.setTarget(MOTORS, 6400)
                 #tango.setTarget(TURN, 6400)
             else:
-                if(distance > 1.5):
+                if(distance > 5):
                     print("forward")
-                    #tango.setTarget(MOTORS, 5300)
-                    #tango.setTarget(TURN, 6700)
+                    tango.setTarget(MOTORS, 5300)
+                    tango.setTarget(TURN, 6700)
             
-                elif(distance <= 1.5):
-                    #tango.setTarget(MOTORS, 6000)
-                    #tango.setTarget(TURN, 6000)
+                elif(distance <= 5):
+                    tango.setTarget(MOTORS, 6000)
+                    tango.setTarget(TURN, 6000)
                     print("Entered Mining Area!")
                     miningArea = True
                 
