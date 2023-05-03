@@ -44,12 +44,12 @@ HEADTILT = 4
 
 tango.setTarget(HEADTILT, 6000)
 
-yellow_lower = np.array([0, 51, 178], np.uint8)
-yellow_upper = np.array([57, 218, 256], np.uint8)
-green_lower = np.array([0, 85, 181], np.uint8)
-green_upper = np.array([256, 150, 249], np.uint8)
-pink_lower = np.array([52, 132, 186], np.uint8)
-pink_upper = np.array([251, 206, 230], np.uint8)
+yellow_lower = np.array([120, 150, 150], np.uint8)
+yellow_upper = np.array([200, 255, 200], np.uint8)
+green_lower = np.array([140, 220, 40], np.uint8)
+green_upper = np.array([180, 255, 100], np.uint8)
+pink_lower = np.array([150, 0, 150], np.uint8)
+pink_upper = np.array([255, 100, 255], np.uint8)
 motors = 6000
 
 qrCodes = ['22', '49']
@@ -277,8 +277,8 @@ while True:
                 elif (cX < 270):
                     #turn left?
                     move('left', .2, 1)
-                elif distance > 1:
-                    print("moving forward")
+                
+                if distance > 2:
                     move('forward', .4, 1)
                 else:
                     tango.setTarget(MOTORS, 6000)
