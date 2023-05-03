@@ -62,6 +62,7 @@ faceFound = False
 endArea = True
 colorFound = False
 savedColor = None
+atEnd = False 
 
 # Set size of QR code in real world
 size_of_qrcode = 0.1524 # meters
@@ -215,8 +216,45 @@ while True:
                     savedColor = "pink"
                     x, y, w, h = cv2.boundingRect(contour)
                     color_image = cv2.rectangle(color_image, (x, y), (x + w, y + h), (255, 77, 255), 2)
+        elif savedColor is not None and atEnd is False:
+            c = 0
+            corners, ids, reject = aruco.detectMarkers(frame, aruco_dict, parameters=parameters,)
+            if len(corners) > 0:
+                ids = ids.flatten()
+                for (markerCorner, markerID) in zip(corners, ids):
+                    if (markerID == np.int32(22)):
+                        corners = markerCorner.reshape((4, 2))
+                        (tl, tr, br, bl) = corners
+                        tr = (int(tr[0]), int(tr[1]))
+                        tl = (int(tl[0]), int(tl[1]))
+                        br = (int(br[0]), int(br[1]))
+                        bl = (int(bl[0]), int(bl[1]))
+                        cX = int((tl[0] + br[0]) / 2)
+                        cY = int((tl[1] + br[1]) / 2)
+                        c = 1
+
+            if c is 0:
+                move('right', .5, .5)
+
+            elif c is 1:
+                cv2.circle(color_image, (cX, cY), 5, (0, 165, 255), -1)
+                distance = depth_frame.get_distance(cX,cY)
+
+                if (cX > 370):
+                    move('right', .2, .4)
+                elif (cX < 270):
+                    move('left', .2, .4)
+                else:
+                    if(distance > 1):
+                        move('forward', .75, .5)
+
+                    elif(distance <= 1):
+                        tango.setTarget(MOTORS, 6000)
+                        tango.setTarget(TURN, 6000)
+                        print("Entered Mining Area!")
+                        atEnd = True
                         
-        elif faceFound is True and savedColor is not None:
+        elif savedColor is not None and atEnd is True:
             print("COLOR DETECTED: " + savedColor)
 
             if(savedColor == "yellow"):
