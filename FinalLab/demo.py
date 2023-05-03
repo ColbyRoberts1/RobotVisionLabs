@@ -251,7 +251,7 @@ while True:
                     elif(distance <= 1):
                         tango.setTarget(MOTORS, 6000)
                         tango.setTarget(TURN, 6000)
-                        print("Entered Mining Area!")
+                        print("At End Area!")
                         atEnd = True
                         
         elif savedColor is not None and atEnd is True:
@@ -269,42 +269,23 @@ while True:
             Moments = cv2.moments(color_mask)
             if Moments["m00"] != 0:
                 cX = int(Moments["m10"] / Moments["m00"])
-                cY = int(Moments["m01"] / Moments["m00"])
-            else:
-                cX, cY = 0,0
-            cv2.circle(color_image, (cX, cY), 5, (0, 165, 255), -1)
-
-            distance = depth_frame.get_distance(cX,cY)
+                cY = int(Moments["m01"] 
                 
-            if (cX > 370):
-                #turn right? 
-                print("turning right")
-                motors = 5600 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
-                turns = 5600 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
-                #tango.setTarget(MOTORS, motors)
-                #tango.setTarget(TURN, turns)
+            elif (cX > 370):
+                move('right', .2, .4)
             elif (cX < 270):
                 #turn left?
-                print("turning left")
-                motors = 5600 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
-                turns = 5600 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
-                #tango.setTarget(MOTORS, motors)
-                #tango.setTarget(TURN,turns)
-                print("turning left")
+                move('left', .2, .4)
             elif distance > 0.5:
                 print("moving forward")
-                motors = 5300 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
-                turns = 6700 # !CHANGE TO MATCH UPDATED FOLLOW LINE!
-                #tango.setTarget(MOTORS, motors)
-                #tango.setTarget(TURN,turns)
+                move('forward', .4, .4)
             else:
-                print("done")
+                tango.setTarget(MOTORS, 6000)
+                tango.setTarget(TURN, 6000)
+                print("Done!")
                 break
         
     cv2.imshow("color", color_image)
-    time.sleep(.2)
-    tango.setTarget(MOTORS, 6000)
-    tango.setTarget(TURN, 6000)
 
     # Exit if the 'q' key is pressed
     if cv2.waitKey(1) == 27:
